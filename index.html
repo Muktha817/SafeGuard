@@ -1,0 +1,174 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeGuard - Accident Detection & Prevention</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-color: #1a1a1a;
+      color: #e5e7eb;
+      font-family: 'Inter', sans-serif;
+    }
+    .section {
+      padding: 4rem 1rem;
+    }
+    .hero-bg {
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url('https://images.unsplash.com/photo-1449960238630-7e720e630019?auto=format&fit=crop&w=1920&q=80');
+      background-size: cover;
+      background-position: center;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="bg-gray-900 p-4 sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-blue-400">SafeGuard</h1>
+      <div class="space-x-4">
+        <a href="#home" class="hover:text-blue-400 transition">Home</a>
+        <a href="#features" class="hover:text-blue-400 transition">Features</a>
+        <a href="#importance" class="hover:text-blue-400 transition">Why It Matters</a>
+        <a href="#guidelines" class="hover:text-blue-400 transition">Safety Guidelines</a>
+        <a href="#contact" class="hover:text-blue-400 transition">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section id="home" class="hero-bg section flex items-center justify-center text-center">
+    <div class="max-w-3xl">
+      <h2 class="text-4xl md:text-5xl font-extrabold mb-4">Protecting Lives with Smart Safety Solutions</h2>
+      <p class="text-lg mb-6">SafeGuard uses advanced GPS tracking, emergency SOS, and real-time alerts to prevent and respond to accidents effectively.</p>
+      <a href="#features" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full font-semibold transition">Learn More</a>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="section bg-gray-800">
+    <div class="max-w-7xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-8">Our Features</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-gray-900 p-6 rounded-lg shadow-lg">
+          <h3 class="text-xl font-semibold mb-2">GPS Tracking</h3>
+          <p>Real-time location monitoring to ensure quick response during emergencies and track user movements for safety.</p>
+        </div>
+        <div class="bg-gray-900 p-6 rounded-lg shadow-lg">
+          <h3 class="text-xl font-semibold mb-2">Emergency SOS</h3>
+          <p>Instantly alert emergency contacts and authorities with a single tap, sharing your location and status.</p>
+        </div>
+        <div class="bg-gray-900 p-6 rounded-lg shadow-lg">
+          <h3 class="text-xl font-semibold mb-2">Accident Detection</h3>
+          <p>Advanced sensors detect sudden impacts or irregular patterns, automatically triggering alerts to responders.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Importance of Accident Prevention -->
+  <section id="importance" class="section bg-gray-900">
+    <div class="max-w-7xl mx-auto text-center">
+      <h2 class="text-3xl font-bold mb-6">Why Accident Prevention Matters</h2>
+      <p class="text-lg max-w-3xl mx-auto mb-8">Accidents can have devastating physical, emotional, and financial impacts. Proactive prevention saves lives, reduces injuries, and promotes safer communities. SafeGuard empowers individuals with tools to stay safe and respond swiftly when accidents occur.</p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div>
+          <h3 class="text-xl font-semibold mb-2">Save Lives</h3>
+          <p>Early detection and rapid response can prevent fatalities in critical situations.</p>
+        </div>
+        <div>
+          <h3 class="text-xl font-semibold mb-2">Reduce Costs</h3>
+          <p>Preventing accidents lowers medical and legal expenses for individuals and society.</p>
+        </div>
+        <div>
+          <h3 class="text-xl font-semibold mb-2">Promote Safety</h3>
+          <p>Encouraging safe practices fosters a culture of awareness and responsibility.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Safety Guidelines -->
+  <section id="guidelines" class="section bg-gray-800">
+    <div class="max-w-7xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-8">Safety Guidelines</h2>
+      <ul class="list-disc list-inside space-y-4 max-w-3xl mx-auto text-lg">
+        <li><strong>Stay Alert:</strong> Always be aware of your surroundings, especially in high-risk areas like roads or construction zones.</li>
+        <li><strong>Use Technology:</strong> Leverage tools like SafeGuard’s GPS and SOS features to stay connected and protected.</li>
+        <li><strong>Plan Ahead:</strong> Know your route and inform others of your plans when traveling in unfamiliar or remote areas.</li>
+        <li><strong>Follow Regulations:</strong> Adhere to traffic rules, workplace safety protocols, and other relevant guidelines.</li>
+        <li><strong>Prepare for Emergencies:</strong> Keep emergency contacts updated and know how to use SOS features effectively.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="section bg-gray-900">
+    <div class="max-w-7xl mx-auto text-center">
+      <h2 class="text-3xl font-bold mb-6">Get in Touch</h2>
+      <p class="text-lg max-w-3xl mx-auto mb-8">Have questions or want to learn more about SafeGuard? Contact us today!</p>
+      <div class="max-w-md mx-auto">
+        <input type="email" placeholder="Your Email" class="w-full p-3 mb-4 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:border-blue-500">
+        <textarea placeholder="Your Message" class="w-full p-3 mb-4 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:border-blue-500" rows="4"></textarea>
+        <button class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full font-semibold transition">Send Message</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 p-4 text-center">
+    <p>&copy; 2025 SafeGuard. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
+  </script>
+</body>
+</html>
